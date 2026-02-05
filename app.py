@@ -30,7 +30,6 @@ def menu():
         else:
             print("Invalid input; please try again!")
 
-
 def prompt_add_new_bean(connection):
     name = input("Enter bean name: ")
     method = input("Enter how you've prepared it: ")
@@ -38,13 +37,11 @@ def prompt_add_new_bean(connection):
 
     database.add_bean(connection, name, method, rating)
 
-
 def prompt_see_all_beans(connection):
     beans = database.get_all_beans(connection)
 
     for bean in beans:
         print(f"{bean[1]} {bean[2]} {bean[3]}/100")
-
 
 def prompt_find_bean(connection):
     name = input("Enter bean name to find: ")
@@ -53,12 +50,10 @@ def prompt_find_bean(connection):
     for bean in beans:
         print(f"{bean[1]} {bean[2]} {bean[3]}/100")
 
-
 def prompt_find_best_method(connection):
     name = input("Enter bean name to find: ")
     best_method = database.get_best_preparation_for_bean(connection, name)
 
     print(f"The best preparation method for {name} is: {best_method[2]}")
-
 
 menu()
