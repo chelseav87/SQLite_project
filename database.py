@@ -1,6 +1,6 @@
 import sqlite3
 
-CREATE_BEANS_TABLE = "CREATE_TABLE beans (id INTEGER PRIMARY KEY, name TEXT, method TEXT, rating INTEGER);"
+CREATE_BEANS_TABLE = "CREATE TABLE IF NOT EXISTS beans (id INTEGER PRIMARY KEY, name TEXT, method TEXT, rating INTEGER);"
 
 INSERT_BEAN = "INSERT INTO beans (name, method, rating) VALUES (?, ?, ?);"
 
@@ -10,7 +10,8 @@ GET_BEST_PREPARATION_FOR_BEAN = """
 SELECT * FROM beans
 WHERE name = ?
 ORDER BY rating DESC
-LIMIT 1;"""
+LIMIT 1;
+"""
 
 def connect():
     return sqlite3.connect("data.db")
