@@ -1,10 +1,21 @@
 import database
+import tkinter as tk
+from tkinter import ttk
 
+### GUI Setup ###
+root = tk.Tk()
+root.title("Noodle App")
+root.geometry("400x380")
+root.resizable(False, False)
+
+def build_tab_ui():
+    welcome_label = tk.Label(root, text="test", wraplength=350, pady=30)
+    welcome_label.pack()
+build_tab_ui()
+
+### Menu Functions ###
 user_input_error = "Invalid input, please try again!"
-
 MENU_PROMPT = """
-
---- Noodle App ---
 
 Please choose one of these options:
 
@@ -116,4 +127,7 @@ def prompt_delete_noodle(connection):
         except ValueError:
             print(user_input_error)
 
-menu()
+### GUI Widgets ###
+tk.Button(root, text="Add a new noodle dish", command=lambda:prompt_add_new_noodle).pack(pady=5)
+
+root.mainloop()
