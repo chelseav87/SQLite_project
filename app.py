@@ -1,17 +1,12 @@
 import database
 import tkinter as tk
-from tkinter import ttk
 
 ### GUI Setup ###
 root = tk.Tk()
 root.title("Noodle App")
-root.geometry("400x380")
+root.geometry("1000x380")
 root.resizable(False, False)
-
-def build_tab_ui():
-    welcome_label = tk.Label(root, text="test", wraplength=350, pady=30)
-    welcome_label.pack()
-build_tab_ui()
+tk.Label(root, text="test", wraplength=350, pady=30).place(relx=0.02, rely=0.08, anchor="w")
 
 ### Menu Functions ###
 user_input_error = "Invalid input, please try again!"
@@ -127,7 +122,17 @@ def prompt_delete_noodle(connection):
         except ValueError:
             print(user_input_error)
 
+def quit_app():
+    root.quit()
+
 ### GUI Widgets ###
-tk.Button(root, text="Add a new noodle dish", command=lambda:prompt_add_new_noodle).pack(pady=5)
+tk.Button(root, text="Add a new noodle dish.", command=lambda:prompt_add_new_noodle(connection=any)).place(relx=0.02, rely=0.17, anchor="w")
+tk.Button(root, text="Find a noodle dish by name.", command=lambda:prompt_find_noodle(connection=any)).place(relx=0.02, rely=0.26, anchor="w")
+tk.Button(root, text="See all noodle dishes.", command=lambda:prompt_see_all_noodles(connection=any)).place(relx=0.02, rely=0.35, anchor="w")
+tk.Button(root, text="Search noodle dishes by rating.", command=lambda:prompt_search_noodle_by_rating(connection=any)).place(relx=0.02, rely=0.44, anchor="w")
+tk.Button(root, text="See which preparation method is best for a noodle dish.", command=lambda:prompt_find_best_method(connection=any)).place(relx=0.02, rely=0.53, anchor="w")
+tk.Button(root, text="Delete a noodle dish by name.", command=lambda:prompt_delete_noodle(connection=any)).place(relx=0.02, rely=0.62, anchor="w")
+tk.Button(root, text="Exit.", command=quit_app).place(relx=0.02, rely=0.71, anchor="w")
+
 
 root.mainloop()
