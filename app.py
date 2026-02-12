@@ -1,22 +1,39 @@
+# note. https://pythonguides.com/python-tkinter-notebook/
+
 import database
 import tkinter as tk
 from tkinter import ttk
 
-### --- GUI Setup --- ###
+# --- GUI Setup --- #
 root = tk.Tk()
 root.title("Noodle App")
-root.geometry("400x380")
+root.geometry("380x300")
 root.resizable(False, False)
 notebook = ttk.Notebook(root)
-notebook.pack(expand=True)
 
-### --- Menu Functions --- ###
+# --- Menu Functions --- #
 user_input_error = "Invalid input, please try again!"
 
 def menu():
     connection = database.connect()
     database.create_tables(connection)
 
+def prompt_add_new_noodle(connection):
+    name = input("Enter the name of the noodle dish: ").title()
+    if not name:
+        print(user_input_error)
+        return
+    method = input("Enter how it was prepared: ").title()
+    if not method:
+        print(user_input_error)
+        return
+    rating = int(input("Enter your integer rating score (0-10): "))
+    if rating < 0 or rating > 10:
+        print(user_input_error)
+        return
+    else:
+        database.add_noodle(connection, name, method, rating)
+        print(f"Added {name}, {method}!")
 
 def prompt_find_noodle(connection):
     name = input("Enter noodle dish to find: ").title()
@@ -82,56 +99,46 @@ def prompt_delete_noodle(connection):
 def quit_app():
     root.quit()
 
-### --- Notebook Tabs --- ###
-tab_add = ttk.Frame(notebook)
-notebook.add(tab_add,text="Add New Noodle Dish")
+# --- Notebook Tabs --- #
 
-    name_label = ttk.Label(tab_add,text="Enter the name of the noodle dish: ")
-    name_label.pack(pady=5)
-    name_input = ttk.Entry(tab_add)
-    name_input.pack(pady=5)
+# Tab 1: Add New
+tab_1 = ttk.Frame(notebook)
+notebook.add(tab_1, text="Add New")
 
-method_label = ttk.Label(tab_add,text="Enter how it was prepared: ")
-method_label.pack(pady=5)
-method_input = ttk.Entry(tab_add)
-method_input.pack(pady=5)
+name_lbl = ttk.Label(tab_1, text="Enter the name of the noodle dish: ")
+name_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
+name_entry = ttk.Entry(tab_1)
+name_entry.grid(row=0,column=1,padx=5,pady=10)
 
-rating_label = ttk.Label(tab_add,text="Enter your integer rating score (0-10): ")
-rating_label.pack(pady=5)
-rating_input = ttk.Entry(tab_add)
-rating_input.pack(pady=5)
+method_lbl = ttk.Label(tab_1, text="Enter how it was prepared: ")
+method_lbl.grid(row=1,column=0,padx=5,pady=10,sticky="w")
+method_input = ttk.Entry(tab_1)
+method_input.grid(row=1,column=1,padx=5,pady=10)
 
-def prompt_add_new_noodle(name, method, rating):
-    try:
-        name = name_label
+rating_lbl = ttk.Label(tab_1, text="Enter your integer rating score (0-10): ")
+rating_lbl.grid(row=2,column=0,padx=5,pady=10,sticky="w")
+rating_input = ttk.Entry(tab_1)
+rating_input.grid(row=2,column=1,padx=5,pady=10)
 
-        print(f"Added {name}, {method}!")
-    except ValueError
+# Tab 2: Delete
+tab_2 = ttk.Frame(notebook)
+notebook.add(tab_2,text="Delete")
 
-# def prompt_add_new_noodle(connection):
-#     name = input("Enter the name of the noodle dish: ").title()
-#     if not name:
-#         print(user_input_error)
-#         return
-#     method = input("Enter how it was prepared: ").title()
-#     if not method:
-#         print(user_input_error)
-#         return
-#     rating = int(input("Enter your integer rating score (0-10): "))
-#     if rating < 0 or rating > 10:
-#         print(user_input_error)
-#         return
-#     else:
-#         database.add_noodle(connection, name, method, rating)
-#         print(f"Added {name}, {method}!")
+#searchname
+#choosebyid
 
-tab_delete = ttk.Frame(notebook)
-notebook.add(tab_delete,text="Delete Noodle Dish")
+# Tab 3: All Noodle Dishes
+tab_3 = ttk.Frame(notebook)
+notebook.add(tab_3,text="All Noodle Dishes")
 
-tab_all = ttk.Frame(notebook)
-notebook.add(tab_all,text="See All Noodle Dishes")
+noodle_table = ttk.Treeview(tab_3)
+noodle_table["columns"]=("ID","Name","Method","Rating")
+noodle_table.heading("ID",text="ID")
+noodle_table.heading("Name",text="Name")
+noodle_table.heading("Method",text="Method")
+noodle_table.heading("Rating",text="Rating")
 
+noodle_table.pack(fill="both",expand=True)
 
-tk.Button(root, text="Exit.", command=quit_app).pack(pady=5)
-
+notebook.pack(expand=True,fill="both")
 root.mainloop()
