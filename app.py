@@ -7,8 +7,8 @@ from tkinter import ttk
 # --- GUI Setup --- #
 root = tk.Tk()
 root.title("Noodle App")
-root.geometry("380x300")
-root.resizable(False, False)
+root.geometry("380x410")
+root.resizable(width=False,height=False)
 notebook = ttk.Notebook(root)
 
 # --- Menu Functions --- #
@@ -102,42 +102,77 @@ def quit_app():
 # --- Notebook Tabs --- #
 
 # Tab 1: Add New
-tab_1 = ttk.Frame(notebook)
+tab_1 = tk.Frame(notebook)
 notebook.add(tab_1, text="Add New")
 
-name_lbl = ttk.Label(tab_1, text="Enter the name of the noodle dish: ")
+name_lbl = tk.Label(tab_1, text="Enter the name of the noodle dish: ")
 name_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
-name_entry = ttk.Entry(tab_1)
+name_entry = tk.Text(tab_1,width=18,height=1)
 name_entry.grid(row=0,column=1,padx=5,pady=10)
 
-method_lbl = ttk.Label(tab_1, text="Enter how it was prepared: ")
+method_lbl = tk.Label(tab_1, text="Enter how it was prepared: ")
 method_lbl.grid(row=1,column=0,padx=5,pady=10,sticky="w")
-method_input = ttk.Entry(tab_1)
-method_input.grid(row=1,column=1,padx=5,pady=10)
+method_entry = tk.Text(tab_1,width=18,height=1)
+method_entry.grid(row=1,column=1,padx=5,pady=10)
 
-rating_lbl = ttk.Label(tab_1, text="Enter your integer rating score (0-10): ")
+rating_lbl = tk.Label(tab_1, text="Enter your integer rating score (0-10): ")
 rating_lbl.grid(row=2,column=0,padx=5,pady=10,sticky="w")
-rating_input = ttk.Entry(tab_1)
-rating_input.grid(row=2,column=1,padx=5,pady=10)
+rating_entry = tk.Text(tab_1,width=18,height=1)
+rating_entry.grid(row=2,column=1,padx=5,pady=10)
+
+
+def add_data():
+    pass
+
+tk.Button(tab_1, text="Add Noodle Dish", command=add_data).grid(row=3,padx=5,pady=5,sticky="w")
 
 # Tab 2: Delete
-tab_2 = ttk.Frame(notebook)
+tab_2 = tk.Frame(notebook)
 notebook.add(tab_2,text="Delete")
 
-#searchname
-#choosebyid
+name_lbl = tk.Label(tab_2, text="Enter the name of the noodle dish: ")
+name_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
+name_entry = tk.Text(tab_2,width=15,height=1)
+name_entry.grid(row=0,column=1,padx=5,pady=10)
+
+noodle_table = ttk.Treeview(tab_2)
+noodle_table["columns"]=("ID","Method","Rating")
+noodle_table.column(column="#0",width=10)
+noodle_table.column(column="ID",width=50)
+noodle_table.column(column="Method",width=150)
+noodle_table.column(column="Rating",width=150)
+noodle_table.heading("ID",text="ID")
+noodle_table.heading("Method",text="Method")
+noodle_table.heading("Rating",text="Rating")
+noodle_table.grid(row=2,column=0,padx=5,pady=0,sticky="w",columnspan=2)
+
+id_lbl = tk.Label(tab_2, text="Enter the ID of the noodle dish to delete: ")
+id_lbl.grid(row=4,column=0,padx=5,pady=10,sticky="w")
+lbl_entry = tk.Text(tab_2,width=15,height=1)
+lbl_entry.grid(row=4,column=1,padx=5,pady=10)
+
+def egg():
+    pass
+
+tk.Button(tab_2, text="<- Prev", command=egg).grid(row=3,column=0,padx=5,pady=5,sticky="w")
+tk.Button(tab_2, text="Next ->", command=egg).grid(row=3,columnspan=2,column=0,padx=5,pady=5,sticky="e")
+tk.Button(tab_2, text="Delete Noodle Dish", command=egg).grid(row=5,padx=5,pady=5,sticky="w")
 
 # Tab 3: All Noodle Dishes
-tab_3 = ttk.Frame(notebook)
+tab_3 = tk.Frame(notebook)
 notebook.add(tab_3,text="All Noodle Dishes")
 
 noodle_table = ttk.Treeview(tab_3)
 noodle_table["columns"]=("ID","Name","Method","Rating")
+noodle_table.column(column="#0",width=10)
+noodle_table.column(column="ID",width=50)
+noodle_table.column(column="Name",width=130)
+noodle_table.column(column="Method",width=120)
+noodle_table.column(column="Rating",width=50)
 noodle_table.heading("ID",text="ID")
 noodle_table.heading("Name",text="Name")
 noodle_table.heading("Method",text="Method")
 noodle_table.heading("Rating",text="Rating")
-
 noodle_table.pack(fill="both",expand=True)
 
 notebook.pack(expand=True,fill="both")
