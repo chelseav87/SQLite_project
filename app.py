@@ -1,6 +1,3 @@
-# https://pythonguides.com/python-tkinter-notebook/
-# https://www.w3resource.com/python-exercises/tkinter/python-tkinter-widgets-exercise-18.php
-
 import sqlite3
 import tkinter as tk
 from tkinter import ttk
@@ -48,7 +45,7 @@ def delete_noodle():
                 delete_output.set(user_input_error)
             else:
                 connection.commit()
-                delete_output.set(f"Successfully deleted ID: {delete_id} | {to_delete}!")
+                delete_output.set(f"Successfully deleted {to_delete} (ID: {delete_id})!")
     except ValueError:
         delete_output.set(user_input_error)
 

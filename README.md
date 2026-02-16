@@ -1,3 +1,11 @@
-Credits:
-https://pythonguides.com/python-tkinter-notebook/
-https://www.w3resource.com/python-exercises/tkinter/python-tkinter-widgets-exercise-18.php
+References:
+- Grade 11 Tkinter project ("U2_tkinter_project_CV")
+- SQLite cursor object
+  - https://www.geeksforgeeks.org/python/python-sqlite-cursor-object/
+- Inserting data into database through Tkinter
+  - https://www.plus2net.com/python/tkinter-sqlite-insert.php
+- Tkinter treeview widget
+  - https://pythonguides.com/python-tkinter-notebook/
+  - https://www.w3resource.com/python-exercises/tkinter/python-tkinter-widgets-exercise-18.php
+- Passing arguments to button widget using "lambda"
+  - https://www.geeksforgeeks.org/python/how-to-pass-arguments-to-tkinter-button-command/
