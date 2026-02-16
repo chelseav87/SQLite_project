@@ -101,7 +101,7 @@ user_input_error = "Invalid input, please try again!"
 
 def add_data():
     try:
-        name = name_entry.get("1.0",tk.END).strip().title()
+        name = name_1_entry.get("1.0",tk.END).strip().title()
         method = method_entry.get("1.0",tk.END).strip().title()
         rating = int(rating_entry.get("1.0",tk.END).strip())
         conn.execute("INSERT INTO noodles (Name, Method, Rating) VALUES (?, ?, ?);", (name, method, rating))
@@ -123,10 +123,10 @@ def quit_app():
 tab_1 = tk.Frame(notebook)
 notebook.add(tab_1, text="Add New")
 
-name_lbl = tk.Label(tab_1, text="Enter the name of the noodle dish: ")
-name_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
-name_entry = tk.Text(tab_1,width=18,height=1)
-name_entry.grid(row=0,column=1,padx=5,pady=10)
+name_1_lbl = tk.Label(tab_1, text="Enter the name of the noodle dish: ")
+name_1_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
+name_1_entry = tk.Text(tab_1,width=18,height=1)
+name_1_entry.grid(row=0,column=1,padx=5,pady=10)
 
 method_lbl = tk.Label(tab_1, text="Enter how it was prepared: ")
 method_lbl.grid(row=1,column=0,padx=5,pady=10,sticky="w")
@@ -148,10 +148,10 @@ output.set("...")
 tab_2 = tk.Frame(notebook)
 notebook.add(tab_2,text="Delete")
 
-name1_lbl = tk.Label(tab_2, text="Enter the name of the noodle dish: ")
-name1_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
-name1_entry = tk.Text(tab_2,width=15,height=1)
-name1_entry.grid(row=0,column=1,padx=5,pady=10)
+name_2_lbl = tk.Label(tab_2, text="Enter the name of the noodle dish: ")
+name_2_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
+name_2_entry = tk.Text(tab_2,width=15,height=1)
+name_2_entry.grid(row=0,column=1,padx=5,pady=10)
 
 noodle_table = ttk.Treeview(tab_2)
 noodle_table["columns"]=("ID","Method","Rating")
