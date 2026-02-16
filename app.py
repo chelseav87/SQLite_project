@@ -9,11 +9,11 @@ from tkinter import ttk
 # --- GUI Setup --- #
 root = tk.Tk()
 root.title("Noodle App")
-root.geometry("380x280")
+root.geometry("380x300")
 root.resizable(width=False,height=False)
 notebook = ttk.Notebook(root)
 
-# --- Menu Functions --- #
+# --- Database Functions --- #
 connection = sqlite3.connect("data.db")
 conn = connection.cursor()
 conn.execute("""CREATE TABLE IF NOT EXISTS noodles (
@@ -22,59 +22,6 @@ conn.execute("""CREATE TABLE IF NOT EXISTS noodles (
     Method TEXT,
     Rating INTEGER)""")
 user_input_error = "Invalid input, please try again!"
-
-# def prompt_find_noodle(connection):
-#     name = input("Enter noodle dish to find: ").title()
-#     noodles = database.get_noodles_by_name(connection, name)
-#     if not noodles:
-#         print("Cannot find noodle dish!")
-#     else:
-#         for noodle in noodles:
-#             print(f"{noodle[1]}, {noodle[2]} | {noodle[3]}/10")
-#
-# def prompt_search_noodle_by_rating(connection):
-#     try:
-#         min_rating = int(input("Enter minimum range (0-10): "))
-#         max_rating = int(input("Enter maximum range (0-10): "))
-#         if min_rating < 0 or max_rating > 10 or min_rating > max_rating:
-#             print(user_input_error)
-#             return
-#         else:
-#             noodles = database.get_noodles_by_rating(connection, min_rating, max_rating)
-#             if not noodles:
-#                 print("No noodle dishes within that range!")
-#             else:
-#                 for noodle in noodles:
-#                     print(f"{noodle[1]}, {noodle[2]} | {noodle[3]}/10")
-#     except ValueError:
-#         print(user_input_error)
-#
-# def prompt_find_best_method(connection):
-#     name = input("Enter noodle dish to find: ").title()
-#     try:
-#         best_method = database.get_best_preparation_for_noodle(connection, name)
-#         print(f"The best preparation method for {name} is {best_method[2]}!")
-#     except TypeError:
-#         print("Cannot find noodle dish!")
-#
-# def prompt_delete_noodle(connection):
-#     name = input("Enter noodle dish to delete: ").title()
-#     noodles = database.get_noodles_by_name(connection, name)
-#     if not noodles:
-#         print("Cannot find noodle dish!")
-#     else:
-#         for noodle in noodles:
-#             print(f"{noodle[0]}: {noodle[1]}, {noodle[2]} | {noodle[3]}/10")
-#         try:
-#             noodle_id = int(input("\nEnter the ID of the noodle dish you want to delete: "))
-#             valid_id = [noodle[0] for noodle in noodles]
-#             if noodle_id not in valid_id:
-#                 print(user_input_error)
-#             else:
-#                 database.delete_noodle(connection, name, noodle_id)
-#                 print(f"ID {noodle_id}: {name} deleted!")
-#         except ValueError:
-#             print(user_input_error)
 
 def add_noodle():
     try:
@@ -86,12 +33,33 @@ def add_noodle():
             rating = int(rating_entry.get("1.0",tk.END).strip())
             conn.execute("INSERT INTO noodles (Name, Method, Rating) VALUES (?, ?, ?);", (name, method, rating))
             connection.commit()
-            add_output.set(f"Added {name}, {method}! ({rating}/10)")
+            add_output.set(f"Successfully added {name}, {method}! ({rating}/10)")
     except ValueError:
         add_output.set(user_input_error)
 
 def delete_noodle():
-    pass
+    try:
+        to_delete = to_delete_entry.get("1.0", tk.END).strip().title()
+        if not to_delete:
+            delete_output.set(user_input_error)
+        else:
+            delete_id = int(delete_id_entry.get("1.0", tk.END).strip())
+            conn.execute("DELETE FROM noodles WHERE name = ? and ID = ?",(to_delete, delete_id))
+            if conn.rowcount == 0:
+                delete_output.set(user_input_error)
+            else:
+                connection.commit()
+                delete_output.set(f"Successfully deleted ID: {delete_id} | {to_delete}!")
+    except ValueError:
+        delete_output.set(user_input_error)
+
+def populate_table(existing_data):
+    if existing_data:
+        for data in noodle_table.get_children():
+            noodle_table.delete(data)
+    all_noodles = conn.execute("SELECT * FROM noodles;")
+    for item in all_noodles:
+        noodle_table.insert("", "end", values=(item[0], item[1], item[2], item[3]))
 
 def sort_noodle_table(sort_table, header, descending):
     sort_noodles = [(sort_table.set(data, header), data) for data in sort_table.get_children("")]
@@ -139,8 +107,10 @@ to_delete_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
 to_delete_entry = tk.Text(tab_2,width=22,height=1)
 to_delete_entry.grid(row=0,column=1,padx=5,pady=10,sticky="e")
 
-id_lbl = tk.Label(tab_2, text="Enter specific ID: ")
-id_lbl.grid(row=1,column=0,padx=5,pady=10,sticky="w")
+delete_id_lbl = tk.Label(tab_2, text="Enter specific ID: ")
+delete_id_lbl.grid(row=1,column=0,padx=5,pady=10,sticky="w")
+delete_id_entry = tk.Text(tab_2,width=22,height=1)
+delete_id_entry.grid(row=1,column=1,padx=5,pady=10,sticky="e")
 
 tk.Button(tab_2, text="Delete Noodle Dish", command=delete_noodle).grid(row=2,padx=5,pady=10,sticky="w")
 
@@ -153,21 +123,23 @@ delete_output.set("...")
 tab_3 = tk.Frame(notebook)
 notebook.add(tab_3,text="See All Noodles")
 
+sort_lbl = tk.Label(tab_3, text="Click column headers to sort!")
+sort_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
+
 columns = ("ID","Name","Method","Rating")
 noodle_table = ttk.Treeview(tab_3, columns=columns, show="headings")
-noodle_table.column(column="#0",width=10)
+noodle_table.column(column="#0",stretch=False)
 noodle_table.column(column="ID",width=30)
 noodle_table.column(column="Name",width=175)
 noodle_table.column(column="Method",width=100)
 noodle_table.column(column="Rating",width=60)
-noodle_table.grid(row=0,column=0,padx=5,pady=10,columnspan=3)
+noodle_table.grid(row=1,column=0,padx=5,columnspan=3)
 
 for column in columns:
     noodle_table.heading(column,text=column,command=lambda col=column: sort_noodle_table(noodle_table, col, False))
 
-all_noodles = conn.execute("SELECT * FROM noodles;")
-for item in all_noodles:
-    noodle_table.insert("", "end", values=(item[0], item[1], item[2], item[3]))
+tk.Button(tab_3, text="Refresh", command=lambda:populate_table(True)).grid(row=0,column=2,padx=5,pady=10,sticky="e")
 
 notebook.pack(expand=True,fill="both")
+populate_table(False)
 root.mainloop()

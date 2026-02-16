@@ -10,9 +10,6 @@ ORDER BY rating DESC
 LIMIT 1;"""
 DELETE_NOODLE = "DELETE FROM noodles WHERE name = ? and ID = ?;"
 
-def add_noodle(name, method, rating):
-    connection.execute(INSERT_NOODLE, (name, method, rating))
-
 def get_noodles_by_name(connection, name):
     with connection:
         return connection.execute(GET_NOODLES_BY_NAME, (name,)).fetchall()
