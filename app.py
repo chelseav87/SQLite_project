@@ -41,7 +41,8 @@ noodle_list = "noodles.csv"
 with open(noodle_list, "w") as csvfile:
     csv_writer = csv.writer(csvfile, delimiter=",")
     csv_writer.writerow(headers)
-    csv_writer.writerow(rows)
+    for row in rows:
+        csv_writer.writerow(row)
 
 # --- Settings --- #
 def settings_menu():
