@@ -32,14 +32,6 @@ def settings_menu():
     settings_window.geometry("240x200")
     settings_window.resizable(width=False, height=False)
 
-    def change_theme():
-        root_bg = root.cget("bg")
-        if root_bg == dark_mode_bg:
-            new_bg = light_mode_bg
-        else:
-            new_bg = dark_mode_bg
-        root.configure(bg=new_bg)
-
     def delete_all():
         pass
         # conn.execute("DELETE * FROM noodles")
@@ -50,11 +42,10 @@ def settings_menu():
     def auto_populate():
         pass
 
-    tk.Button(settings_window,text="Switch Light/Dark Mode",command=change_theme).pack(side=tk.TOP,expand=True,fill="both",padx=5,pady=5)
-    tk.Button(settings_window,text="Delete All Noodle Dishes",command=delete_all).pack(side=tk.TOP,expand=True,fill="both",padx=5,pady=5)
-    tk.Button(settings_window,text="Auto-populate List of Noodle Dishes",command=auto_populate).pack(side=tk.TOP,expand=True,fill="both",padx=5,pady=5)
+    tk.Button(settings_window,text="Delete All Noodle Dishes",command=delete_all).pack(side="top",expand=True,fill="both",padx=5,pady=5)
+    tk.Button(settings_window,text="Auto-populate List of Noodle Dishes",command=auto_populate).pack(side="top",expand=True,fill="both",padx=5,pady=5)
 
-tk.Button(root,text="Settings",command=settings_menu).pack(side=tk.BOTTOM,pady=5)
+tk.Button(root,text="Settings",command=settings_menu).pack(side="bottom",pady=5)
 
 # --- Notebook Tabs --- #
 # Tab 1: Add New
