@@ -9,5 +9,3 @@ References:
   - https://www.w3resource.com/python-exercises/tkinter/python-tkinter-widgets-exercise-18.php
 - Passing arguments to button widget using "lambda"
   - https://www.geeksforgeeks.org/python/how-to-pass-arguments-to-tkinter-button-command/
-- Initial entries of noodle dishes
-  - https://www.tasteatlas.com/best-rated-noodles-in-the-world
