@@ -2,6 +2,7 @@ import sqlite3
 import tkinter as tk
 from tkinter import ttk, Toplevel
 import csv
+import os
 
 # --- GUI Setup --- #
 root = tk.Tk()
@@ -13,11 +14,10 @@ notebook = ttk.Notebook(root)
 connection = sqlite3.connect("data.db")
 conn = connection.cursor()
 conn.execute("""CREATE TABLE IF NOT EXISTS noodles (
-    ID INTEGER PRIMARY KEY,
+    ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Name TEXT,
     Origin TEXT,
-    Rating INTEGER)"""
-    )
+    Rating INTEGER)""")
 
 def quit_app():
     root.quit()
@@ -33,16 +33,14 @@ rows = [["Khao Soi","Northern Thailand","6"],["Tonkotsu Ramen","Fukuoka, Japan",
         ["Ohn No Khao Swe","Myanmar","4"],["Mie Aceh","Aceh, Indonesia","1"],
         ["Pancit Palabok","Philippines","3"],["Tsuivan","Mongolia","3"],
         ["Idiyappam","Tamil Nadu, India","6"],["Soul Mac & Cheese","Southern United States","3"],
-        ["Pastitsio","Greece","6"],["Tagliatelle al Ragu","Italy","8"]
-        ]
+        ["Pastitsio","Greece","6"],["Tagliatelle al Ragu","Italy","8"]]
 
-noodle_list = "noodles.csv"
-
-with open(noodle_list, "w") as csvfile:
-    csv_writer = csv.writer(csvfile, delimiter=",")
-    csv_writer.writerow(headers)
-    for row in rows:
-        csv_writer.writerow(row)
+if not os.path.exists("noodles.csv"):
+    with open("noodles.csv","w") as write_csv:
+        csv_writer = csv.writer(write_csv)
+        csv_writer.writerow(headers)
+        for row in rows:
+            csv_writer.writerow(row)
 
 # --- Settings --- #
 def settings_menu():
@@ -59,7 +57,12 @@ def settings_menu():
             # output.set("No noodle dishes exist yet!")
 
     def auto_populate():
-        pass
+        with open("noodles.csv","r") as read_file:
+            reader = csv.reader(read_file)
+            next(reader)
+            for line in reader:
+                conn.execute("INSERT INTO noodles (Name, Origin, Rating) VALUES (?, ?, ?);", line)
+        connection.commit()
 
     def back_up():
         pass
