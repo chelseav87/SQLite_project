@@ -50,11 +50,11 @@ def settings_menu():
     settings_window.resizable(width=False,height=False)
 
     def delete_all():
-        pass
-        # conn.execute("DELETE * FROM noodles")
+        conn.execute("DELETE FROM noodles;")
+        connection.commit()
+        settings_output.set("All noodles dishes successfully deleted!")
         if conn.rowcount == 0:
-            pass
-            # output.set("No noodle dishes exist yet!")
+            settings_output.set("No noodle dishes exist yet!")
 
     def auto_populate():
         with open("noodles.csv","r") as read_file:
@@ -67,9 +67,14 @@ def settings_menu():
     def back_up():
         pass
 
-    tk.Button(settings_window,text="Delete All Noodle Dishes From Database",command=delete_all).pack(side="top",expand=True,fill="both",padx=5,pady=5)
-    tk.Button(settings_window,text="Auto-populate List of Noodle Dishes",command=auto_populate).pack(side="top",expand=True,fill="both",padx=5,pady=5)
-    tk.Button(settings_window,text="Back-up Data",command=back_up).pack(side="top",expand=True,fill="both",padx=5,pady=5)
+    tk.Button(settings_window,text="Delete All Noodle Dishes From Database",command=delete_all).pack(side="top",expand=True,fill="x",padx=5,ipady=15)
+    tk.Button(settings_window,text="Auto-populate List of Noodle Dishes",command=auto_populate).pack(side="top",expand=True,fill="x",padx=5,ipady=15)
+    tk.Button(settings_window,text="Back-up Data",command=back_up).pack(side="top",expand=True,fill="x",padx=5,ipady=15)
+
+    settings_output = tk.StringVar()
+    settings_output_lbl = tk.Label(settings_window,textvariable=settings_output)
+    settings_output_lbl.pack(side="top",expand=True,fill="x",padx=5,pady=5)
+    settings_output.set("")
 
 tk.Button(root,text="Settings",command=settings_menu).pack(side="bottom", pady=5)
 
