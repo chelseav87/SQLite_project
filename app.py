@@ -3,11 +3,12 @@ import tkinter as tk
 from tkinter import ttk, Toplevel
 import csv
 import os
+import datetime
 
 # --- GUI Setup --- #
 root = tk.Tk()
 root.title("Noodle App")
-root.geometry("380x300")
+root.geometry("380x350")
 root.resizable(width=False, height=False)
 notebook = ttk.Notebook(root)
 
@@ -19,29 +20,6 @@ conn.execute("""CREATE TABLE IF NOT EXISTS noodles (
     Origin TEXT,
     Rating INTEGER)""")
 
-def quit_app():
-    root.quit()
-
-# --- CSV File --- #
-headers = ["Name","Origin","Rating"]
-rows = [["Khao Soi","Northern Thailand","6"],["Tonkotsu Ramen","Fukuoka, Japan","1"],
-        ["Kasspatzln","Tyrol, Austria","1"],["Youpo Mian","Xi'an, China","8"],
-        ["Pho Dac Biet","Vietnam","6"],["Niurou Mian","Taiwan","4"],
-        ["Char Kway Teow","Singapore","4"],["Lagman","Uzbekistan","7"],
-        ["Mee Goreng Mamak","Malaysia","8"],["Kasespatzle","Baden-Wurttemberg, Germany","7"],
-        ["Ash Reshtah","Iran","9"],["Jajangmyeon","South Korea","4"],
-        ["Ohn No Khao Swe","Myanmar","4"],["Mie Aceh","Aceh, Indonesia","1"],
-        ["Pancit Palabok","Philippines","3"],["Tsuivan","Mongolia","3"],
-        ["Idiyappam","Tamil Nadu, India","6"],["Soul Mac & Cheese","Southern United States","3"],
-        ["Pastitsio","Greece","6"],["Tagliatelle al Ragu","Italy","8"]]
-
-if not os.path.exists("noodles.csv"):
-    with open("noodles.csv","w") as write_csv:
-        csv_writer = csv.writer(write_csv)
-        csv_writer.writerow(headers)
-        for row in rows:
-            csv_writer.writerow(row)
-
 # --- Settings --- #
 def settings_menu():
     settings_window = Toplevel(root)
@@ -51,25 +29,54 @@ def settings_menu():
 
     def delete_all():
         conn.execute("DELETE FROM noodles;")
-        connection.commit()
-        settings_output.set("All noodles dishes successfully deleted!")
         if conn.rowcount == 0:
             settings_output.set("No noodle dishes exist yet!")
+        else:
+            connection.commit()
+            settings_output.set("All noodles dishes successfully deleted!")
 
-    def auto_populate():
+    def import_preset():
+        rows = [["Khao Soi","Northern Thailand","6"], ["Tonkotsu Ramen","Fukuoka, Japan","1"],
+                ["Kasspatzln","Tyrol, Austria","1"], ["Youpo Mian","Xi'an, China","8"],
+                ["Pho Dac Biet","Vietnam","6"], ["Niurou Mian","Taiwan","4"],
+                ["Char Kway Teow","Singapore","4"], ["Lagman","Uzbekistan","7"],
+                ["Mee Goreng Mamak","Malaysia","8"], ["Kasespatzle","Baden-Wurttemberg, Germany","7"],
+                ["Ash Reshtah","Iran","9"], ["Jajangmyeon","South Korea","4"],
+                ["Ohn No Khao Swe","Myanmar","4"], ["Mie Aceh","Aceh, Indonesia","1"],
+                ["Pancit Palabok","Philippines","3"], ["Tsuivan","Mongolia","3"],
+                ["Idiyappam","Tamil Nadu, India","6"], ["Soul Mac & Cheese","Southern United States","3"],
+                ["Pastitsio","Greece","6"], ["Tagliatelle al Ragu","Italy","8"]]
+
+        if not os.path.exists("noodles.csv"):
+            with open("noodles.csv","w",newline="") as write_preset_csv:
+                csv_writer = csv.writer(write_preset_csv)
+                csv_writer.writerow(["Name","Origin","Rating"])
+                for row in rows:
+                    csv_writer.writerow(row)
+
         with open("noodles.csv","r") as read_file:
             reader = csv.reader(read_file)
             next(reader)
-            for line in reader:
-                conn.execute("INSERT INTO noodles (Name, Origin, Rating) VALUES (?, ?, ?);", line)
+            conn.executemany("INSERT INTO noodles (Name, Origin, Rating) VALUES (?, ?, ?);", reader)
         connection.commit()
+        settings_output.set("Imported preset list of noodle dishes!")
 
     def back_up():
-        pass
+        get_time = datetime.datetime.now().strftime("%Y_%m_%d_%H-%M-%S")
+        with open(f"noodles_back_up_{get_time}.csv","w",newline="") as write_back_up_csv:
+            csv_writer = csv.writer(write_back_up_csv)
+            csv_writer.writerow(["Name","Origin","Rating"])
+            rows = conn.execute("SELECT Name, Origin, Rating FROM noodles").fetchall()
+            if rows == "":
+                settings_output.set("No noodle dishes exist yet!")
+            else:
+                for row in rows:
+                    csv_writer.writerow(row)
+                    settings_output.set("Successfully backed up data!")
 
-    tk.Button(settings_window,text="Delete All Noodle Dishes From Database",command=delete_all).pack(side="top",expand=True,fill="x",padx=5,ipady=15)
-    tk.Button(settings_window,text="Auto-populate List of Noodle Dishes",command=auto_populate).pack(side="top",expand=True,fill="x",padx=5,ipady=15)
-    tk.Button(settings_window,text="Back-up Data",command=back_up).pack(side="top",expand=True,fill="x",padx=5,ipady=15)
+    tk.Button(settings_window,text="Delete All Noodle Dishes From Database",command=delete_all).pack(side="top",expand=True,fill="x",padx=5,ipady=7)
+    tk.Button(settings_window,text="Import Preset Data",command=import_preset).pack(side="top",expand=True,fill="x",padx=5,ipady=7)
+    tk.Button(settings_window,text="Back-up Data",command=back_up).pack(side="top",expand=True,fill="x",padx=5,ipady=7)
 
     settings_output = tk.StringVar()
     settings_output_lbl = tk.Label(settings_window,textvariable=settings_output)
