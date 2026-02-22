@@ -35,6 +35,7 @@ def settings_menu():
         else:
             connection.commit()
             settings_output.set("All noodles dishes successfully deleted!")
+            refresh_table(True)
 
     def import_preset():
         if not os.path.exists("noodles.csv"):
@@ -61,6 +62,7 @@ def settings_menu():
             conn.executemany("INSERT INTO noodles (Name, Origin, Rating) VALUES (?, ?, ?);", reader)
         connection.commit()
         settings_output.set("Imported preset list of noodle dishes!")
+        refresh_table(True)
 
     def back_up():
         get_time = datetime.datetime.now().strftime("%Y_%m_%d_%H-%M-%S")
@@ -106,6 +108,7 @@ def add_noodle():
             conn.execute("INSERT INTO noodles (Name, Origin, Rating) VALUES (?, ?, ?);", (name,origin,rating))
             connection.commit()
             add_output.set(f"Successfully added {name} ({origin}, {rating}/10)!")
+            refresh_table(True)
 
     except ValueError:
         add_output.set("Please enter a valid integer rating!")
@@ -151,6 +154,7 @@ def delete_noodle():
             else:
                 connection.commit()
                 delete_output.set(f"Successfully deleted {to_delete} (ID: {delete_id})!")
+                refresh_table(True)
 
     except ValueError:
         delete_output.set("Please enter a valid ID!")
