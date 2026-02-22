@@ -29,6 +29,7 @@ def settings_menu():
 
     def delete_all():
         conn.execute("DELETE FROM noodles;")
+
         if conn.rowcount == 0:
             settings_output.set("No noodle dishes exist yet!")
         else:
@@ -64,6 +65,7 @@ def settings_menu():
     def back_up():
         get_time = datetime.datetime.now().strftime("%Y_%m_%d_%H-%M-%S")
         rows = conn.execute("SELECT Name, Origin, Rating FROM noodles").fetchall()
+
         if not rows:
             settings_output.set("No noodle dishes exist yet!")
         else:
@@ -94,6 +96,7 @@ def add_noodle():
     try:
         name = name_entry.get("1.0",tk.END).strip().title()
         origin = origin_entry.get("1.0",tk.END).strip().title()
+
         if not name:
             add_output.set("Please enter a name!")
         elif not origin:
@@ -103,6 +106,7 @@ def add_noodle():
             conn.execute("INSERT INTO noodles (Name, Origin, Rating) VALUES (?, ?, ?);", (name,origin,rating))
             connection.commit()
             add_output.set(f"Successfully added {name} ({origin}, {rating}/10)!")
+
     except ValueError:
         add_output.set("Please enter a valid integer rating!")
 
@@ -135,16 +139,19 @@ notebook.add(tab_2,text="Delete")
 def delete_noodle():
     try:
         to_delete = to_delete_entry.get("1.0",tk.END).strip().title()
+
         if not to_delete:
             delete_output.set("Please enter a name!")
         else:
             delete_id = int(delete_id_entry.get("1.0",tk.END).strip())
             conn.execute("DELETE FROM noodles WHERE name = ? and ID = ?", (to_delete,delete_id))
+
             if conn.rowcount == 0:
                 delete_output.set("Noodle dish not found!")
             else:
                 connection.commit()
                 delete_output.set(f"Successfully deleted {to_delete} (ID: {delete_id})!")
+
     except ValueError:
         delete_output.set("Please enter a valid ID!")
 
@@ -174,11 +181,18 @@ def refresh_table(existing_data):
         for data in noodle_table.get_children():
             noodle_table.delete(data)
     all_noodles = conn.execute("SELECT * FROM noodles;")
+
     for item in all_noodles:
         noodle_table.insert("","end",values=(item[0],item[1],item[2],item[3]))
 
 def sort_noodle_table(sort_table,header,descending):
-    sort_noodles = [(sort_table.set(data,header), data) for data in sort_table.get_children("")]
+    sort_noodles = []
+    for data in sort_table.get_children(""):
+        value = sort_table.set(data,header)
+        if header in ("ID","Rating"):
+            value = int(value)
+        sort_noodles.append((value,data))
+
     sort_noodles.sort(reverse=descending)
     for index,(value,data) in enumerate(sort_noodles):
         sort_table.move(data,"",index)
