@@ -63,13 +63,13 @@ def settings_menu():
 
     def back_up():
         get_time = datetime.datetime.now().strftime("%Y_%m_%d_%H-%M-%S")
-        with open(f"noodles_back_up_{get_time}.csv","w",newline="") as write_back_up_csv:
-            csv_writer = csv.writer(write_back_up_csv)
-            csv_writer.writerow(["Name","Origin","Rating"])
-            rows = conn.execute("SELECT Name, Origin, Rating FROM noodles").fetchall()
-            if rows == "":
-                settings_output.set("No noodle dishes exist yet!")
-            else:
+        rows = conn.execute("SELECT Name, Origin, Rating FROM noodles").fetchall()
+        if not rows:
+            settings_output.set("No noodle dishes exist yet!")
+        else:
+            with open(f"noodles_back_up_{get_time}.csv","w",newline="") as write_back_up_csv:
+                csv_writer = csv.writer(write_back_up_csv)
+                csv_writer.writerow(["Name","Origin","Rating"])
                 for row in rows:
                     csv_writer.writerow(row)
                     settings_output.set("Successfully backed up data!")
