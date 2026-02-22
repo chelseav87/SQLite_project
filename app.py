@@ -28,7 +28,7 @@ def settings_menu():
     settings_window.resizable(width=False,height=False)
 
     def delete_all():
-        conn.execute("DELETE FROM noodles;")
+        conn.execute("DELETE FROM noodles")
 
         if conn.rowcount == 0:
             settings_output.set("No noodle dishes exist yet!")
@@ -37,18 +37,18 @@ def settings_menu():
             settings_output.set("All noodles dishes successfully deleted!")
 
     def import_preset():
-        rows = [["Khao Soi","Northern Thailand","6"], ["Tonkotsu Ramen","Fukuoka, Japan","1"],
-                ["Kasspatzln","Tyrol, Austria","1"], ["Youpo Mian","Xi'an, China","8"],
-                ["Pho Dac Biet","Vietnam","6"], ["Niurou Mian","Taiwan","4"],
-                ["Char Kway Teow","Singapore","4"], ["Lagman","Uzbekistan","7"],
-                ["Mee Goreng Mamak","Malaysia","8"], ["Kasespatzle","Baden-Wurttemberg, Germany","7"],
-                ["Ash Reshtah","Iran","9"], ["Jajangmyeon","South Korea","4"],
-                ["Ohn No Khao Swe","Myanmar","4"], ["Mie Aceh","Aceh, Indonesia","1"],
-                ["Pancit Palabok","Philippines","3"], ["Tsuivan","Mongolia","3"],
-                ["Idiyappam","Tamil Nadu, India","6"], ["Soul Mac & Cheese","Southern United States","3"],
-                ["Pastitsio","Greece","6"], ["Tagliatelle al Ragu","Italy","8"]]
-
         if not os.path.exists("noodles.csv"):
+            rows = [["Khao Soi", "Northern Thailand", "6"], ["Tonkotsu Ramen", "Fukuoka, Japan", "1"],
+                    ["Kasspatzln", "Tyrol, Austria", "1"], ["Youpo Mian", "Xi'an, China", "8"],
+                    ["Pho Dac Biet", "Vietnam", "6"], ["Niurou Mian", "Taiwan", "4"],
+                    ["Char Kway Teow", "Singapore", "4"], ["Lagman", "Uzbekistan", "7"],
+                    ["Mee Goreng Mamak", "Malaysia", "8"], ["Kasespatzle", "Baden-Wurttemberg, Germany", "7"],
+                    ["Ash Reshtah", "Iran", "9"], ["Jajangmyeon", "South Korea", "4"],
+                    ["Ohn No Khao Swe", "Myanmar", "4"], ["Mie Aceh", "Aceh, Indonesia", "1"],
+                    ["Pancit Palabok", "Philippines", "3"], ["Tsuivan", "Mongolia", "3"],
+                    ["Idiyappam", "Tamil Nadu, India", "6"], ["Soul Mac & Cheese", "Southern United States", "3"],
+                    ["Pastitsio", "Greece", "6"], ["Tagliatelle al Ragu", "Italy", "8"]]
+
             with open("noodles.csv","w",newline="") as write_preset_csv:
                 csv_writer = csv.writer(write_preset_csv)
                 csv_writer.writerow(["Name","Origin","Rating"])
@@ -185,8 +185,12 @@ def refresh_table(existing_data):
     for item in all_noodles:
         noodle_table.insert("","end",values=(item[0],item[1],item[2],item[3]))
 
+    for column in columns:
+        noodle_table.heading(column,text=column,command=lambda col=column:sort_noodle_table(noodle_table,col,False))
+
 def sort_noodle_table(sort_table,header,descending):
     sort_noodles = []
+
     for data in sort_table.get_children(""):
         value = sort_table.set(data,header)
         if header in ("ID","Rating"):
@@ -194,9 +198,19 @@ def sort_noodle_table(sort_table,header,descending):
         sort_noodles.append((value,data))
 
     sort_noodles.sort(reverse=descending)
+
     for index,(value,data) in enumerate(sort_noodles):
         sort_table.move(data,"",index)
-    sort_table.heading(header,command=lambda:sort_noodle_table(sort_table,header,not descending))
+
+    for col in columns:
+        sort_table.heading(col,text=col)
+
+    if not descending:
+        arrow = " ▴"
+    else:
+        arrow = " ▾"
+
+    sort_table.heading(header,text=header + arrow,command=lambda:sort_noodle_table(sort_table,header,not descending))
 
 sort_lbl = tk.Label(tab_3,text="Click column headers to sort!")
 sort_lbl.grid(row=0,column=0,padx=5,pady=10,sticky="w")
